@@ -1,0 +1,25 @@
+# === Node (Vue frontend) ===
+node_modules/
+dist/
+.vite/
+.env
+.env.*  # Ignore all env files in frontend
+*.local
+
+# === Python (Flask backend) ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+instance/
+*.db
+*.sqlite3
+
+# === OS/System files ===
+.DS_Store
+Thumbs.db
+*.log
+
+# === VS Code settings (optional) ===
+.vscode/
