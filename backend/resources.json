@@ -1,0 +1,22 @@
+{
+  "resources": [
+    {
+      "topic": "Linear Algebra",
+      "youtube": ["https://youtu.be/1Xl2qfL0hJc"],
+      "blogs": ["https://towardsdatascience.com/linear-algebra-for-ml"],
+      "courses": ["https://www.coursera.org/learn/linear-algebra-machine-learning"]
+    },
+    {
+      "topic": "Python Basics",
+      "youtube": ["https://youtu.be/_uQrJ0TkZlc"],
+      "blogs": ["https://realpython.com/python-basics/"],
+      "courses": ["https://www.codecademy.com/learn/learn-python-3"]
+    },
+    {
+      "topic": "Pandas",
+      "youtube": ["https://youtu.be/vmEHCJofslg"],
+      "blogs": ["https://pandas.pydata.org/docs/getting_started/"],
+      "courses": ["https://www.datacamp.com/courses/pandas-foundations"]
+    }
+  ]
+}
