@@ -2,9 +2,15 @@
   <div class="container">
     <h1>🧭 SkillPath Generator</h1>
     <input v-model="goal" placeholder="Enter your goal..." />
-    <button @click="generateRoadmap">Generate Plan</button>
+    <button @click="generateRoadmap" :disabled="loading">
+      {{ loading ? 'Generating...' : 'Generate Plan' }}
+    </button>
 
-    <div v-if="loading" class="loading">⚙️ Generating...</div>
+    <!-- Real-time status updates -->
+    <div v-if="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <div class="status-message">{{ statusMessage }}</div>
+    </div>
 
     <!-- Actions at the top when roadmap is generated -->
     <div v-if="roadmap.length" class="actions-top">
@@ -23,15 +29,19 @@
       <h2>📘 Your Learning Roadmap</h2>
       
       <div class="steps">
-        <div v-for="(item, index) in roadmap" :key="index" class="step-card">
+        <div v-for="(item, index) in roadmap" :key="index" class="step-card" :class="{ 'loading-step': item.isLoading }">
           <div class="step-header">
             <span class="step-number">{{ index + 1 }}</span>
             <h3 class="step-title">{{ cleanStepTitle(item.step) }}</h3>
+            <div v-if="item.isLoading" class="step-loading-indicator">
+              <div class="mini-spinner"></div>
+            </div>
           </div>
           
           <div v-if="item.resources && hasResources(item.resources)" class="resources">
             <h4>📚 Resources:</h4>
             <div class="resource-grid">
+              <!-- YouTube Resources -->
               <div v-if="item.resources.youtube && item.resources.youtube.length" class="resource-item">
                 <div class="resource-icon youtube">📺</div>
                 <div class="resource-content">
@@ -39,9 +49,13 @@
                   <a :href="item.resources.youtube[0]" target="_blank" class="resource-link">
                     Watch on YouTube
                   </a>
+                  <div v-if="item.resources.youtube.length > 1" class="additional-resources">
+                    +{{ item.resources.youtube.length - 1 }} more
+                  </div>
                 </div>
               </div>
               
+              <!-- Blog Resources -->
               <div v-if="item.resources.blogs && item.resources.blogs.length" class="resource-item">
                 <div class="resource-icon blog">📖</div>
                 <div class="resource-content">
@@ -49,9 +63,13 @@
                   <a :href="item.resources.blogs[0]" target="_blank" class="resource-link">
                     Read Article
                   </a>
+                  <div v-if="item.resources.blogs.length > 1" class="additional-resources">
+                    +{{ item.resources.blogs.length - 1 }} more
+                  </div>
                 </div>
               </div>
               
+              <!-- Course Resources -->
               <div v-if="item.resources.courses && item.resources.courses.length" class="resource-item">
                 <div class="resource-icon course">📘</div>
                 <div class="resource-content">
@@ -59,8 +77,27 @@
                   <a :href="item.resources.courses[0]" target="_blank" class="resource-link">
                     Take Course
                   </a>
+                  <div v-if="item.resources.courses.length > 1" class="additional-resources">
+                    +{{ item.resources.courses.length - 1 }} more
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Loading placeholders for resources -->
+          <div v-if="item.isLoading" class="resources-loading">
+            <div class="loading-placeholder">
+              <div class="placeholder-icon"></div>
+              <div class="placeholder-text"></div>
+            </div>
+            <div class="loading-placeholder">
+              <div class="placeholder-icon"></div>
+              <div class="placeholder-text"></div>
+            </div>
+            <div class="loading-placeholder">
+              <div class="placeholder-icon"></div>
+              <div class="placeholder-text"></div>
             </div>
           </div>
         </div>
@@ -76,10 +113,96 @@ import jsPDF from 'jspdf'
 const goal = ref("")
 const roadmap = ref([])
 const loading = ref(false)
+const statusMessage = ref("")
 
 const generateRoadmap = async () => {
   loading.value = true
   roadmap.value = []
+  statusMessage.value = "Initializing..."
+
+  try {
+    const eventSource = new EventSource(`http://localhost:5000/generate-roadmap?goal=${encodeURIComponent(goal.value)}`)
+    
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        console.log('Received:', data)
+
+        switch (data.type) {
+          case 'status':
+            statusMessage.value = data.message
+            break
+
+          case 'roadmap_generated':
+            // Initialize roadmap with steps
+            roadmap.value = data.steps.map(step => ({
+              step: step,
+              resources: { youtube: [], blogs: [], courses: [] },
+              isLoading: true
+            }))
+            statusMessage.value = "Loading resources..."
+            break
+
+          case 'step_start':
+            statusMessage.value = `Loading resources for step ${data.index + 1}...`
+            if (roadmap.value[data.index]) {
+              roadmap.value[data.index].isLoading = true
+            }
+            break
+
+          case 'resources_update':
+            if (roadmap.value[data.index]) {
+              roadmap.value[data.index].resources[data.resource_type] = data.data
+              // Trigger reactivity
+              roadmap.value = [...roadmap.value]
+            }
+            break
+
+          case 'step_complete':
+            if (roadmap.value[data.index]) {
+              roadmap.value[data.index].isLoading = false
+              // Trigger reactivity
+              roadmap.value = [...roadmap.value]
+            }
+            break
+
+          case 'complete':
+            loading.value = false
+            statusMessage.value = "Roadmap generated successfully!"
+            eventSource.close()
+            break
+
+          case 'error':
+            loading.value = false
+            statusMessage.value = "Error: " + data.message
+            alert("Error: " + data.message)
+            eventSource.close()
+            break
+        }
+      } catch (e) {
+        console.error('Error parsing event data:', e)
+      }
+    }
+
+    eventSource.onerror = (error) => {
+      console.error('EventSource error:', error)
+      loading.value = false
+      statusMessage.value = "Connection error"
+      eventSource.close()
+      
+      // Fallback to regular POST request
+      fallbackGenerate()
+    }
+
+  } catch (err) {
+    loading.value = false
+    roadmap.value = []
+    alert("Error: " + err.message)
+  }
+}
+
+// Fallback function for when streaming fails
+const fallbackGenerate = async () => {
   try {
     const res = await fetch("http://localhost:5000/generate-roadmap", {
       method: "POST",
@@ -88,11 +211,12 @@ const generateRoadmap = async () => {
     })
     const data = await res.json()
     roadmap.value = data.roadmap || []
+    loading.value = false
   } catch (err) {
     roadmap.value = []
     alert("Error: " + err.message)
+    loading.value = false
   }
-  loading.value = false
 }
 
 // Helper function to clean step titles
@@ -118,13 +242,19 @@ const copyToClipboard = () => {
     if (item.resources && hasResources(item.resources)) {
       stepText += '\nResources:'
       if (item.resources.youtube && item.resources.youtube.length) {
-        stepText += `\n📺 Video: ${item.resources.youtube[0]}`
+        item.resources.youtube.forEach((link, i) => {
+          stepText += `\n📺 Video ${i + 1}: ${link}`
+        })
       }
       if (item.resources.blogs && item.resources.blogs.length) {
-        stepText += `\n📖 Blog: ${item.resources.blogs[0]}`
+        item.resources.blogs.forEach((link, i) => {
+          stepText += `\n📖 Blog ${i + 1}: ${link}`
+        })
       }
       if (item.resources.courses && item.resources.courses.length) {
-        stepText += `\n📘 Course: ${item.resources.courses[0]}`
+        item.resources.courses.forEach((link, i) => {
+          stepText += `\n📘 Course ${i + 1}: ${link}`
+        })
       }
     }
     
@@ -334,9 +464,68 @@ button {
   box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
 }
 
-button:hover {
+button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.loading {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #333;
+  border-top: 4px solid #f39c12;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.status-message {
+  font-size: 1.1rem;
+  color: #f39c12;
+  font-weight: 500;
+}
+
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #333;
+  border-top: 2px solid #f39c12;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.step-loading-indicator {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.loading-step {
+  opacity: 0.7;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .actions-top {
@@ -365,18 +554,6 @@ button:hover {
 .md-btn {
   background: linear-gradient(45deg, #2ecc71, #27ae60);
   box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-}
-
-.loading {
-  margin: 30px 0;
-  font-size: 1.2rem;
-  color: #f39c12;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
 }
 
 .roadmap-container {
@@ -442,6 +619,7 @@ button:hover {
   color: #fff;
   font-size: 1.2rem;
   line-height: 1.3;
+  flex-grow: 1;
 }
 
 .resources {
@@ -505,6 +683,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex-grow: 1;
 }
 
 .resource-type {
@@ -525,6 +704,66 @@ button:hover {
   text-decoration: underline;
 }
 
+.additional-resources {
+  font-size: 0.75rem;
+  color: #999;
+  font-style: italic;
+}
+
+.resources-loading {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #555;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.loading-placeholder {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.loading-placeholder {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.08) 40px,
+    rgba(255, 255, 255, 0.03) 80px
+  );
+  background-size: 600px;
+}
+
+.placeholder-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.placeholder-text {
+  flex-grow: 1;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 15px;
@@ -543,6 +782,10 @@ button:hover {
     grid-template-columns: 1fr;
   }
   
+  .resources-loading {
+    grid-template-columns: 1fr;
+  }
+  
   .step-header {
     flex-direction: column;
     align-items: flex-start;
@@ -551,6 +794,11 @@ button:hover {
   
   .step-number {
     margin-right: 0;
+  }
+  
+  .step-loading-indicator {
+    margin-left: 0;
+    margin-top: 10px;
   }
 }
 </style>
