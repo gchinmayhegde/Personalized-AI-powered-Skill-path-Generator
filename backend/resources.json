@@ -1,22 +1,181 @@
 {
   "resources": [
     {
+      "topic": "UI/UX Design",
+      "youtube": ["https://youtu.be/c9Wg6Cb_YlU"],
+      "blogs": ["https://medium.com/ux-planet"],
+      "courses": [
+        "https://www.coursera.org/learn/ui-ux-design",
+        "https://www.udemy.com/course/ui-ux-web-design-using-figma/"
+      ]
+    },
+    {
+      "topic": "Figma Design",
+      "youtube": ["https://youtu.be/FTFaQWZBqQ8"],
+      "blogs": ["https://medium.com/figma-africa"],
+      "courses": [
+        "https://www.coursera.org/learn/figma-design",
+        "https://www.udemy.com/course/figma-ui-ux-design-essentials/"
+      ]
+    },
+    {
       "topic": "Linear Algebra",
-      "youtube": ["https://youtu.be/1Xl2qfL0hJc"],
+      "youtube": ["https://youtu.be/fNk_zzaMoSs"],
       "blogs": ["https://towardsdatascience.com/linear-algebra-for-ml"],
       "courses": ["https://www.coursera.org/learn/linear-algebra-machine-learning"]
     },
     {
-      "topic": "Python Basics",
+      "topic": "Python Programming",
       "youtube": ["https://youtu.be/_uQrJ0TkZlc"],
       "blogs": ["https://realpython.com/python-basics/"],
-      "courses": ["https://www.codecademy.com/learn/learn-python-3"]
+      "courses": [
+        "https://www.coursera.org/learn/python",
+        "https://www.udemy.com/course/complete-python-bootcamp/"
+      ]
     },
     {
-      "topic": "Pandas",
+      "topic": "Web Development",
+      "youtube": ["https://youtu.be/UB1O30fR-EE"],
+      "blogs": ["https://medium.com/web-development"],
+      "courses": [
+        "https://www.coursera.org/learn/html-css-javascript-for-web-developers",
+        "https://www.udemy.com/course/the-complete-web-development-bootcamp/"
+      ]
+    },
+    {
+      "topic": "React Development",
+      "youtube": ["https://youtu.be/Ke90Tje7VS0"],
+      "blogs": ["https://medium.com/react-hooks"],
+      "courses": [
+        "https://www.coursera.org/learn/react-basics",
+        "https://www.udemy.com/course/react-the-complete-guide-incl-redux/"
+      ]
+    },
+    {
+      "topic": "Data Science",
+      "youtube": ["https://youtu.be/ua-CiDNNj30"],
+      "blogs": ["https://towardsdatascience.com/data-science-basics"],
+      "courses": [
+        "https://www.coursera.org/learn/python-data-analysis",
+        "https://www.udemy.com/course/the-data-science-course-complete-data-science-bootcamp/"
+      ]
+    },
+    {
+      "topic": "Machine Learning",
+      "youtube": ["https://youtu.be/GwIo3gDZCVQ"],
+      "blogs": ["https://medium.com/machine-learning-101"],
+      "courses": [
+        "https://www.coursera.org/learn/machine-learning",
+        "https://www.udemy.com/course/machinelearning/"
+      ]
+    },
+    {
+      "topic": "Pandas Data Analysis",
       "youtube": ["https://youtu.be/vmEHCJofslg"],
       "blogs": ["https://pandas.pydata.org/docs/getting_started/"],
-      "courses": ["https://www.datacamp.com/courses/pandas-foundations"]
+      "courses": [
+        "https://www.coursera.org/learn/python-data-analysis",
+        "https://www.udemy.com/course/data-analysis-with-pandas/"
+      ]
+    },
+    {
+      "topic": "Digital Marketing",
+      "youtube": ["https://youtu.be/bixR-KIJKYM"],
+      "blogs": ["https://medium.com/digital-marketing-strategy"],
+      "courses": [
+        "https://www.coursera.org/learn/digital-marketing",
+        "https://www.udemy.com/course/learn-digital-marketing-course/"
+      ]
+    },
+    {
+      "topic": "Graphic Design",
+      "youtube": ["https://youtu.be/WONZVnlam6U"],
+      "blogs": ["https://medium.com/design-bootcamp"],
+      "courses": [
+        "https://www.coursera.org/learn/graphic-design",
+        "https://www.udemy.com/course/graphic-design-masterclass-intermediate/"
+      ]
+    },
+    {
+      "topic": "Photography",
+      "youtube": ["https://youtu.be/LxO-6rlihSg"],
+      "blogs": ["https://medium.com/photography-secrets"],
+      "courses": [
+        "https://www.coursera.org/learn/photography-basics",
+        "https://www.udemy.com/course/photography-masterclass-complete-guide-to-photography/"
+      ]
+    },
+    {
+      "topic": "Content Writing",
+      "youtube": ["https://youtu.be/yvi5uXQMvu4"],
+      "blogs": ["https://medium.com/writers-guild"],
+      "courses": [
+        "https://www.coursera.org/learn/writing-for-web",
+        "https://www.udemy.com/course/content-writing-course/"
+      ]
+    },
+    {
+      "topic": "Project Management",
+      "youtube": ["https://youtu.be/ZKOL-rZ79gs"],
+      "blogs": ["https://medium.com/project-management-tools"],
+      "courses": [
+        "https://www.coursera.org/learn/project-management",
+        "https://www.udemy.com/course/project-management-professional-pmp/"
+      ]
+    },
+    {
+      "topic": "Cybersecurity",
+      "youtube": ["https://youtu.be/inWWhr5tnEA"],
+      "blogs": ["https://medium.com/cybersecurity"],
+      "courses": [
+        "https://www.coursera.org/learn/intro-cyber-security",
+        "https://www.udemy.com/course/complete-cyber-security-course-hackers-exposed/"
+      ]
+    },
+    {
+      "topic": "Cloud Computing AWS",
+      "youtube": ["https://youtu.be/3hLmDS179YE"],
+      "blogs": ["https://medium.com/aws-cloud"],
+      "courses": [
+        "https://www.coursera.org/learn/aws-cloud-practitioner-essentials",
+        "https://www.udemy.com/course/aws-certified-cloud-practitioner/"
+      ]
+    },
+    {
+      "topic": "Video Editing",
+      "youtube": ["https://youtu.be/Hls3Tp7JS8E"],
+      "blogs": ["https://medium.com/video-editing-tips"],
+      "courses": [
+        "https://www.coursera.org/learn/video-editing",
+        "https://www.udemy.com/course/adobe-premiere-pro-video-editing/"
+      ]
+    },
+    {
+      "topic": "Animation",
+      "youtube": ["https://youtu.be/uDqjIdI4bF4"],
+      "blogs": ["https://medium.com/animation-obsessive"],
+      "courses": [
+        "https://www.coursera.org/learn/animation-principles",
+        "https://www.udemy.com/course/after-effects-complete-course/"
+      ]
+    },
+    {
+      "topic": "Mobile App Development",
+      "youtube": ["https://youtu.be/fis26HvvDII"],
+      "blogs": ["https://medium.com/mobile-app-development"],
+      "courses": [
+        "https://www.coursera.org/learn/android-app-development",
+        "https://www.udemy.com/course/flutter-bootcamp-with-dart/"
+      ]
+    },
+    {
+      "topic": "Blockchain Development",
+      "youtube": ["https://youtu.be/gyMwXuJrbJQ"],
+      "blogs": ["https://medium.com/blockchain-development"],
+      "courses": [
+        "https://www.coursera.org/learn/blockchain-basics",
+        "https://www.udemy.com/course/blockchain-and-bitcoin-fundamentals/"
+      ]
     }
   ]
 }
